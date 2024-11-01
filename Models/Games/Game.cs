@@ -175,6 +175,17 @@ public class Game
     {
         SpecialPaths.Add(name, path);
     }
+
+    /// <summary>
+    /// Returns whether the mod install should extract the file name given.
+    /// By default, this returns true. In games that depend on archive files such as zip,
+    /// You should override this and return false when needed.
+    /// This will only be called for supported archive types such as: zip, 7z, rar, tar, etc.
+    /// </summary>
+    public virtual bool ShouldExtract(string fileName, Stream stream)
+    {
+        return true;
+    }
 }
 
 #endregion methods

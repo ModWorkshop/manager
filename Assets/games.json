@@ -59,5 +59,12 @@
     "MWSID": 5,
     "Icon": "avares://MWSManager/Assets/games/cassette-icon.png",
     "ClassName": "CassetteBeastsGame"
+  },
+
+  "road-to-vostok": {
+    "SteamID": 2141300,
+    "MWSID": 864,
+    "Icon": "avares://MWSManager/Assets/games/rtv-icon.png",
+    "ClassName": "RoadToVostokGame"
   }
 }

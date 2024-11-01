@@ -53,7 +53,7 @@ public class ModInstall
 
         // Generally assume that if it's an archive file it needs to be extracted.
         // It's possible we'll need to make special cases for some games. At the moment, I don't know any game that needs such things.
-        if (KnownArchiveTypes.Contains(type))
+        if (KnownArchiveTypes.Contains(type) && update.Game.ShouldExtract(fileName, stream))
         {
             stream.Position = 0;
 
