@@ -10,10 +10,10 @@
 			 x:Class="MWSManager.Views.GamePageView">
 
 	<DockPanel HorizontalAlignment="Stretch">
-		<DockPanel Width="500">
-			<TextBox Watermark="Search..." Margin="0 10 0 0" DockPanel.Dock="Top" Text="{Binding SearchModQuery}"/>
+		<StackPanel Width="500">
+			<TextBox Watermark="Search..." Margin="0 10 0 0" Text="{Binding SearchModQuery}"/>
 			
-			<TextBlock IsVisible="{Binding !HasMods}"  HorizontalAlignment="Center" VerticalAlignment="Center">No mods found!</TextBlock>
+			<TextBlock IsVisible="{Binding !HasMods}"  Margin="16" TextAlignment="Center">No mods found!</TextBlock>
 
 			<ListBox
 				Margin="0 4 0 8"
@@ -22,7 +22,7 @@
 				ItemsSource="{Binding OrderedMods}"
 				SelectedItem="{Binding SelectedMod}"
 			/>
-		</DockPanel>
+		</StackPanel>
 		<views:ModInfoView DataContext="{Binding ModInfo}"/>
 	</DockPanel>
 </UserControl>
