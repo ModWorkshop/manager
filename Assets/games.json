@@ -66,5 +66,12 @@
     "MWSID": 864,
     "Icon": "avares://MWSManager/Assets/games/rtv-icon.png",
     "ClassName": "RoadToVostokGame"
+  },
+
+  "monster-sanctuary": {
+    "SteamId": 814370,
+    "MWSID": 799,
+    "Icon": "avares://MWSManager/Assets/games/ms-icon.png",
+    "ClassName": "UnityEngineGame"
   }
 }
