@@ -80,6 +80,7 @@ public class ModInstall
             );
         } else
         {
+            stream.Position = 0;
             using var tempFile = File.OpenWrite(Path.Combine(TempPath, fileName));
             stream.CopyTo(tempFile);
             Files.Add(fileName);
