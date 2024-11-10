@@ -37,7 +37,7 @@ public class ModWorkshop : Provider
     public ModWorkshop()
     {
         Name = "mws";
-        DownloadURL = "https://dev-api.modworkshop.net/mods/$Id$/download";
+        DownloadURL = "https://api.modworkshop.net/mods/$Id$/download";
     }
 
     public async override Task CheckMultipleUpdates(List<ModUpdate> updates)
@@ -45,7 +45,7 @@ public class ModWorkshop : Provider
         for (int i = 0; i < updates.Count; i+=100)
         {
             var client = Utils.GetHTTPClient();
-            var builder = new UriBuilder("https://dev-api.modworkshop.net/mods/versions");
+            var builder = new UriBuilder("https://api.modworkshop.net/mods/versions");
             var query = HttpUtility.ParseQueryString(builder.Query);
             builder.Port = -1;
 
@@ -80,7 +80,7 @@ public class ModWorkshopFile : Provider
     public ModWorkshopFile()
     {
         Name = "mws-file";
-        DownloadURL = "https://dev-api.modworkshop.net/files/$Id$/download";
+        DownloadURL = "https://api.modworkshop.net/files/$Id$/download";
     }
 
     public async override Task CheckMultipleUpdates(List<ModUpdate> updates)
@@ -88,7 +88,7 @@ public class ModWorkshopFile : Provider
         for (int i = 0; i < updates.Count; i += 100)
         {
             var client = Utils.GetHTTPClient();
-            var builder = new UriBuilder("https://dev-api.modworkshop.net/files/versions");
+            var builder = new UriBuilder("https://api.modworkshop.net/files/versions");
             var query = HttpUtility.ParseQueryString(builder.Query);
             builder.Port = -1;
 
@@ -119,13 +119,13 @@ public class ModWorkshopFile : Provider
     {
         var client = Utils.GetHTTPClient();
 
-        var fileResponse = await client.GetStringAsync($"https://dev-api.modworkshop.net/files/{id}");
+        var fileResponse = await client.GetStringAsync($"https://api.modworkshop.net/files/{id}");
         if (fileResponse == null)
             return;
 
         var fileData = JsonConvert.DeserializeObject<MWSFile>(fileResponse);
 
-        var modResponse = await client.GetStringAsync($"https://dev-api.modworkshop.net/mods/{fileData.mod_id}");
+        var modResponse = await client.GetStringAsync($"https://api.modworkshop.net/mods/{fileData.mod_id}");
         if (modResponse == null)
         {
             Log.Information("Could not fetch MWS mod! (ID: {0})", id);

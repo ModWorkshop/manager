@@ -1,7 +1,7 @@
 ﻿{
   "payday2": {
     "SteamId": 218620,
-    "MWSId": 2,
+    "MWSId": 1,
     "EpicId": "384f75fdd6b34f63a2daace1a3c5dab0",
     "ClassName": "Diesel.PD2Game",
     "Icon": "avares://MWSManager/Assets/games/pd2-icon.png"
@@ -9,14 +9,14 @@
 
   "raidww2": {
     "SteamID": 414740,
-    "MWSId": 3,
+    "MWSId": 543,
     "ClassName": "Diesel.RAIDWW2Game",
     "Icon": "avares://MWSManager/Assets/games/rww2-icon.png"
   },
 
   "pdth": {
     "SteamID": 24240,
-    "MWSId": 4,
+    "MWSId": 2,
     "ClassName": "Diesel.PDTHGame",
     "Icon": "avares://MWSManager/Assets/games/pdth-icon.png"
   },
@@ -36,7 +36,7 @@
       "UnrealName": "CrimeBoss"
     },
     "SteamId": 2933080,
-    "MWSId": 1,
+    "MWSId": 857,
     "Icon": "avares://MWSManager/Assets/games/cb-icon.png",
     "ClassName": "UE4Game",
     "SpecialPaths": {
@@ -49,14 +49,14 @@
 
   "noita": {
     "SteamID": 881100,
-    "MWSId": 1,
+    "MWSId": 752,
     "Icon": "avares://MWSManager/Assets/games/noita-icon.png",
     "ClassName": "NoitaGame"
   },
 
   "cassette-beasts": {
     "SteamID": 1321440,
-    "MWSID": 5,
+    "MWSID": 850,
     "Icon": "avares://MWSManager/Assets/games/cassette-icon.png",
     "ClassName": "CassetteBeastsGame"
   },

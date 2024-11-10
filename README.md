@@ -4,4 +4,4 @@ This repo contains a very early version of the mod manager. It barely does anyth
 
 The mod manager is built on .NET 8 with the Avalonia framework.
 
-To test the mod manager, use the modworkshop dev site (https://dev.modworkshop.net). It has the mod manager's URI scheme added to it.
+To test the mod manager, turn on Developer Mode here: https://modworkshop.net/user-settings/settings. You should see the button appear in the supported games' mods.
