@@ -9,20 +9,29 @@
 			 x:DataType="vm:GamePageViewModel"
 			 x:Class="MWSManager.Views.GamePageView">
 
-	<DockPanel HorizontalAlignment="Stretch">
-		<StackPanel Width="500">
-			<TextBox Watermark="Search..." Margin="0 10 0 0" Text="{Binding SearchModQuery}"/>
-			
-			<TextBlock IsVisible="{Binding !HasMods}"  Margin="16" TextAlignment="Center">No mods found!</TextBlock>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="500"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
 
+			<TextBox Grid.Row="0" Watermark="Search..." Margin="0 10 0 0" Text="{Binding SearchModQuery}"/>
+
+			<TextBlock IsVisible="{Binding !HasMods}"  Margin="16" TextAlignment="Center" Grid.Row="1">No mods found!</TextBlock>
 			<ListBox
+				Grid.Row="1"
 				Margin="0 4 0 8"
 				Classes="FluentList"
 				IsVisible="{Binding HasMods}"
 				ItemsSource="{Binding OrderedMods}"
 				SelectedItem="{Binding SelectedMod}"
 			/>
-		</StackPanel>
-		<views:ModInfoView DataContext="{Binding ModInfo}"/>
-	</DockPanel>
+		</Grid>
+		<views:ModInfoView Grid.Column="1" DataContext="{Binding ModInfo}"/>
+	</Grid>
 </UserControl>
