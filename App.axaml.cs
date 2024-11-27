@@ -21,6 +21,7 @@ using Avalonia.Controls;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Serilog;
+using System.IO;
 
 namespace MWSManager;
 
@@ -36,8 +37,14 @@ public partial class App : Application
     {
         this.EnableHotReload(); // Ensure this line **precedes** `AvaloniaXamlLoader.Load(this);
 
+#if DEBUG
         AllocConsole();
-
+#else
+        if (File.Exists("developer.txt"))
+        {
+            AllocConsole();
+        }
+#endif
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .WriteTo.File("log.txt")
