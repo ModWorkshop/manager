@@ -13,7 +13,7 @@ namespace MWSManager.Models.Games
 {
     public class UnityEngineGame : Game
     {
-        public UnityEngineGame(string name, string gamePath, dynamic? extraData = null) : base(name, gamePath, extraData)
+        public UnityEngineGame(string name, string gamePath, dynamic? extraData = null) : base(name, gamePath)
         {
             ModFileDirs.Add("BepInEx/plugins/*.dll");
         }

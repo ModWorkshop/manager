@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using MWSManager.Models.Games;
+﻿using MWSManager.Models.Games;
 using MWSManager.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;

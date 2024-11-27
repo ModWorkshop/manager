@@ -1,7 +1,5 @@
 using Avalonia.Collections;
 using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Alias;
 using DynamicData.Binding;
