@@ -11,6 +11,8 @@ public partial class SettingsPageViewModel : PageViewModel
 {
     public Settings Data => SettingsService.Data;
 
+    public string AppVersion => GetType().Assembly.GetName().Version.ToString();
+
     public SettingsPageViewModel()
     {
         Thumbnail = "avares://MWSManager/Assets/Settings.png";

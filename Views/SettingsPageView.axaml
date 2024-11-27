@@ -26,7 +26,8 @@
 			</StackPanel>
 			<Panel VerticalAlignment="Bottom">
 				<TextBlock>
-					ModWorkshop Manager v0.1
+					ModWorkshop Manager
+					<TextBlock Text="{Binding AppVersion}"/>
 				</TextBlock>
 			</Panel>
 		</labs:FlexPanel>
