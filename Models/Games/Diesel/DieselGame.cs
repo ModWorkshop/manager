@@ -1,9 +1,18 @@
-﻿using MWSManager.Structures;
+﻿using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MWSManager.Structures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using Avalonia.Controls;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Models;
 
 namespace MWSManager.Models.Games.Diesel;
 
@@ -30,6 +39,25 @@ public class DieselGame : Game
         if (!node.IsFile && ModOverridesFolders.Contains(node.Name))
         {
             Mods.Add(new Mod(this, node.Parent.FullPath, ModOverridesDir));
+            return true;
+        }
+
+        if (node.IsFile && Path.GetExtension(node.Name) == ".pdmod")
+        {
+            Dispatcher.UIThread.Post(async () =>
+            {
+                await MessageBoxManager.GetMessageBoxCustom(new MessageBoxCustomParams
+                {
+                    ContentTitle = "Unsupported!",
+                    ContentMessage = "PDMODs are not supported and will not be supported!\nUse Bundle Modder if you are sure you want to install them.",
+                    Icon = Icon.Forbidden,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Topmost = true,
+                    ButtonDefinitions = [
+                        new() { Name = "Ok" },
+                    ]
+                }).ShowAsync();
+            });
             return true;
         }
 

@@ -125,6 +125,11 @@ public class PD2Game : DieselGame
 
     public override bool CheckPossibleModInNode(PathNode node, List<Mod> Mods)
     {
+        if (base.CheckPossibleModInNode(node, Mods))
+        {
+            return true;
+        }
+
         string? installDir = null;
         var modNode = node;
 
@@ -140,10 +145,6 @@ public class PD2Game : DieselGame
                 // Note: This will install maps in mod_overrides, but considering BeardLib 5, this should be fine
                 // Maps folder now is mostly if you wanna edit maps, otherwise it makes no difference where you put it iirc.
                 installDir = ModOverridesDir;
-            } else if (ModOverridesFolders.Contains(node.Name))
-            {
-                installDir = ModOverridesDir;
-                modNode = node.Parent;
             }
         }
 

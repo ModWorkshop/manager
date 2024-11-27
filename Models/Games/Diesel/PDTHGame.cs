@@ -14,6 +14,11 @@ internal class PDTHGame(string name, string path, dynamic? extraData = null) : D
 {
     public override bool CheckPossibleModInNode(PathNode node, List<Mod> Mods)
     {
+        if (base.CheckPossibleModInNode(node, Mods))
+        {
+            return true;
+        }
+
         string? installDir = null;
         var modNode = node;
 
@@ -23,10 +28,6 @@ internal class PDTHGame(string name, string path, dynamic? extraData = null) : D
             if (node.Contains("base.lua"))
             {
                 installDir = "mods";
-            } else if (ModOverridesFolders.Contains(node.Name))
-            {
-                installDir = ModOverridesDir;
-                modNode = node.Parent;
             }
         }
 
