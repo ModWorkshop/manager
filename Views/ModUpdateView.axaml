@@ -11,7 +11,7 @@
 	<StackPanel Spacing="8">
 		<StackPanel Spacing="8" Orientation="Horizontal">
 			<StackPanel>
-				<TextBlock Text="{Binding Update.Name}"/>
+				<TextBlock Text="{Binding Update.Name}" TextWrapping="Wrap" Width="300"/>
 				<TextBlock IsVisible="{Binding Update.NextVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 					Update Available: <TextBlock Text="{Binding Update.Version}"/> -> <TextBlock Text="{Binding Update.NextVersion}"/>
 				</TextBlock>
