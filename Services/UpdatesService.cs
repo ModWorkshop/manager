@@ -65,7 +65,7 @@ public class UpdatesService
             if (provider.Name == update.Provider)
             {
                 Log.Information("Initating update for {0}", update.Id);
-                _ = provider.StartModUpdate(update);
+                Task.Run(() => provider.StartModUpdate(update));
             }
         }
     }
@@ -76,7 +76,7 @@ public class UpdatesService
         {
             if (provider.Name == providerName)
             {
-                _= provider.URISchemeHandle(action, id);
+                Task.Run(() => provider.URISchemeHandle(action, id));
             }
         }
     }
