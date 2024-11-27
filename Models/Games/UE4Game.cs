@@ -60,12 +60,14 @@ public class UE4Game : Game
 
         if (node.IsFile)
         {
+            var ext = Path.GetExtension(name);
+
             // BLT mods are automatically to be installed in mods folder!
             if (name == "main.lua" || name == "main.dll")
             {
                 installDir = $"{UnrealName}/Binaries/Win64/Mods";
             }
-            else if (Path.GetExtension(name) == ".utoc")
+            else if (ext == ".utoc")
             {
                 // While this is not the smartest way, I believe it should more or less work.
                 // I tried using CUE4Parse, but the docs are quite lacking,
@@ -74,6 +76,10 @@ public class UE4Game : Game
                 {
                     installDir = $"{UnrealName}/Content/Paks/LogicMods";
                 }
+            }
+            else if (ext == ".pak")
+            {
+                installDir = $"{UnrealName}/Content/Paks/~mods";
             }
         }
 
