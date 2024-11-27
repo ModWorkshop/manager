@@ -10,15 +10,16 @@
 
     <Application.DataTemplates>
         <local:ViewLocator/>
-    </Application.DataTemplates>
-  
-    <Application.Styles>
+    </Application.DataTemplates
+
+	<Application.Styles>
+
 		<Style Selector="TextBox.contentMessage">
 			<Setter Property="IsHitTestVisible" Value="False"/>
 		</Style>
-		<!--sty:FluentAvaloniaTheme/-->
-		<semi:SemiTheme Locale="en-US" />
-		<!--FluentTheme /-->
+
+		<sty:FluentAvaloniaTheme PreferUserAccentColor="True"/>
+
 		<labs:ControlThemes/>
 		<StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
 

@@ -20,46 +20,78 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key='Default'>
+					<SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush">#cfd0d3</SolidColorBrush>
+					<SolidColorBrush x:Key="NavBackgroundBrush">#e9e9e9</SolidColorBrush>
+					<SolidColorBrush x:Key="CardBackgroundBrush">#e9e9e9</SolidColorBrush>
+					<SolidColorBrush x:Key="CardSelectedBackgroundBrush">#d9d9d9</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key='Dark'>
+					<SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush">#212529</SolidColorBrush>
+					<SolidColorBrush x:Key="NavBackgroundBrush">#32373e</SolidColorBrush>
+					<SolidColorBrush x:Key="CardBackgroundBrush">#32373e</SolidColorBrush>
+					<SolidColorBrush x:Key="CardSelectedBackgroundBrush">#393f47</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+
+
 	<Window.Styles>
 		<Style Selector="ListBox.FluentList">
-			<Setter Property="Padding" Value="16"/>
+			<Setter Property="Padding" Value="0 8 16 0"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
 		</Style>
 		<Style Selector="ListBox.FluentList ListBoxItem">
 			<Setter Property="Padding" Value="16"/>
 			<Setter Property="Margin" Value="0 0 0 4"/>
 			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
 		</Style>
-		
+		<Style Selector="ListBox.FluentList ListBoxItem:selected /template/ ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource CardSelectedBackgroundBrush}"/>
+		</Style>
 		<Style Selector="ListBox.ThumbList">
-			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Padding" Value="4"/>
 		</Style>
 		<Style Selector="ListBox.ThumbList ListBoxItem">
-			<Setter Property="Margin" Value="0 0 0 4"/>
-			<Setter Property="CornerRadius" Value="8"/>
-		</Style>
-
-		<Style Selector="ListBox.ThumbList ListBoxItem">
-			<Setter Property="Width" Value="64"/>
+			<Setter Property="Padding" Value="0"/>
 			<Setter Property="Height" Value="64"/>
+			<Setter Property="Width" Value="64"/>
+			<Setter Property="MinWidth" Value="64"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Margin" Value="0 4 0 0"/>
+		</Style>
+		<Style Selector="ListBox.ThumbList ListBoxItem:selected /template/ ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource CardSelectedBackgroundBrush}"/>
 		</Style>
 	</Window.Styles>
 	<Grid ZIndex="10">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="96"/>
+			<ColumnDefinition Width="90"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<Grid VerticalAlignment="Stretch" Grid.Column="0">
+		<Grid VerticalAlignment="Stretch" Grid.Column="0" Margin="0 0 12 0" Background="{DynamicResource NavBackgroundBrush}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="152"/>
 			</Grid.RowDefinitions>
-			<ListBox ItemsSource="{Binding Games}" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectedItem="{Binding CurrentGame}" Classes="ThumbList" Grid.Row="0">
+			<ListBox 
+				ItemsSource="{Binding Games}"
+				ScrollViewer.VerticalScrollBarVisibility="Hidden"
+				SelectedItem="{Binding CurrentGame}"
+				Classes="ThumbList"
+				Grid.Row="0"
+			>
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<Border ClipToBounds="True" CornerRadius="10">
 							<Image
-								Width="48"
-								Height="48"
+								Width="42"
+								Height="42"
 								Classes="GameButton"
 								Stretch="UniformToFill"
 								asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
@@ -75,8 +107,8 @@
 					<DataTemplate>
 						<Border ClipToBounds="True" CornerRadius="10">
 							<Image
-								Width="48"
-								Height="48"
+								Width="42"
+								Height="42"
 								Classes="GameButton"
 								Stretch="UniformToFill"
 								asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
