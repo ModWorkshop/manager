@@ -8,6 +8,9 @@ namespace MWSManager.ViewModels;
 public partial class PageViewModel : ViewModelBase
 {
     [Reactive]
+    protected string name = "";
+
+    [Reactive]
     protected string thumbnail = "";
 
     public virtual void OnPageOpened()

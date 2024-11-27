@@ -42,6 +42,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public DownloadsPageViewModel Downloads { get; }
 
+    public static MainWindowViewModel? Instance { get; private set; }
+
     [Reactive]
     private PageViewModel currentPage;
 
@@ -65,6 +67,8 @@ public partial class MainWindowViewModel : ViewModelBase
         this.WhenAnyValue(x => x.CurrentGame).Subscribe(x => OnCurrentGameChanged());
         this.WhenAnyValue(x => x.CurrentPage).Subscribe(x => OnCurrentPageChanging());
         this.WhenAnyValue(x => x.CurrentOtherPage).Subscribe(x => OnCurrentOtherPageChanged());
+
+        Instance = this;
     }
 
     public void LoadGames()
@@ -100,12 +104,33 @@ public partial class MainWindowViewModel : ViewModelBase
             CurrentPage = CurrentGame;
         }
     }
+
     public void OnCurrentOtherPageChanged()
     {
         if (CurrentOtherPage != null)
         {
             CurrentGame = null;
             CurrentPage = CurrentOtherPage;
+        }
+    }
+
+    public void SetCurrentPage(string pageName)
+    {
+        foreach (var page in OtherPages)
+        {
+            if (page.Name == pageName)
+            {
+                CurrentOtherPage = page;
+                return;
+            }
+        }
+
+        foreach (var page in Games)
+        {
+            if (page.Name == pageName)
+            {
+                CurrentOtherPage = page;
+            }
         }
     }
 }

@@ -72,7 +72,7 @@ public class Provider
     /// </summary>
     public virtual async Task DownloadAndInstall(ModUpdate update)
     {
-
+        MainWindowViewModel.Instance?.SetCurrentPage("Downloads");
         var client = Utils.GetHTTPClient();
         var mod = update.Mod;
         var game = update.Game;

@@ -31,6 +31,7 @@ public partial class DownloadsPageViewModel : PageViewModel
     public DownloadsPageViewModel()
     {
         Thumbnail = "avares://MWSManager/Assets/Download.png";
+        Name = "Downloads";
 
         hasUpdatesHelper = Updates.ToObservableChangeSet().Select(x => x.Count > 0).ToProperty(this, x => x.HasUpdates);
 
