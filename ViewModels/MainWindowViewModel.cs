@@ -40,6 +40,8 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PageViewModel> Pages { get; set; } = [];
     public ObservableCollection<PageViewModel> OtherPages { get; set; } = [];
 
+    public ToasterViewModel Toaster { get; }
+    
     public DownloadsPageViewModel Downloads { get; }
 
     public static MainWindowViewModel? Instance { get; private set; }
@@ -53,7 +55,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [Reactive]
     private PageViewModel? currentOtherPage;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(ToasterViewModel toaster)
     {
         Downloads = new DownloadsPageViewModel() { 
             Window = this
@@ -69,6 +71,7 @@ public partial class MainWindowViewModel : ViewModelBase
         this.WhenAnyValue(x => x.CurrentOtherPage).Subscribe(x => OnCurrentOtherPageChanged());
 
         Instance = this;
+        Toaster = toaster;
     }
 
     public void LoadGames()

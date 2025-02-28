@@ -22,6 +22,9 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Serilog;
 using System.IO;
+using Splat;
+using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia;
 
 namespace MWSManager;
 
@@ -32,6 +35,9 @@ public partial class App : Application
 
     [DllImport("Kernel32")]
     public static extern void FreeConsole();
+
+    public static MainWindowViewModel MainWindowViewModelService => Locator.Current.GetService<MainWindowViewModel>()!;
+    public static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
 
     public override void Initialize()
     {
@@ -61,6 +67,18 @@ public partial class App : Application
         service.Set();
 
         AvaloniaXamlLoader.Load(this);
+
+        var build = Locator.CurrentMutable;
+        build.RegisterLazySingleton(() => (IDialogService)new DialogService(
+            new DialogManager(
+                viewLocator: new ViewLocator(),
+                dialogFactory: new DialogFactory().AddFluent(FluentMessageBoxType.TaskDialog)),
+            viewModelFactory: x => Locator.Current.GetService(x)));
+
+        build.RegisterLazySingleton(() => new ToasterViewModel());
+        
+        SplatRegistrations.Register<MainWindowViewModel>();
+        SplatRegistrations.SetupIOC();
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -69,7 +87,7 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = MainWindowViewModelService,
             };
         }
 

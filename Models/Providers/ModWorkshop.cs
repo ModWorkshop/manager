@@ -68,7 +68,9 @@ public class ModWorkshop : Provider
                     }
                 }
             }
-            catch (Exception) { }
+            catch (Exception e) {
+                Log.Error(e.Message);
+            }
         }
     }
 

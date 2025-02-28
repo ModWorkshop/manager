@@ -1,0 +1,116 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls"
+             xmlns:viewModels="clr-namespace:MWSManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800"
+             x:DataType="viewModels:ToastViewModel"
+             x:Class="MWSManager.Views.ToastView">
+    <UserControl.Styles>
+        <Style Selector="Border">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <ThicknessTransition Property="Margin" Duration="0:0:0.2"/>
+                    <DoubleTransition Property="Height" Duration="0:0:0.2"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+            <Style.Animations>
+                <Animation Duration="0:0:0.25"> 
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Margin" Value="0 0 -500 0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Margin" Value="0 0 0 0"/>
+                    </KeyFrame>
+                </Animation>
+                <Animation Duration="0:0:0.15" Easing="ExponentialEaseIn"> 
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        
+        <Style Selector="Border.Close">
+            <Setter Property="Width" Value="0"/>
+            <Setter Property="Margin" Value="0 0 -1000 0"/>
+        </Style>
+        
+        <Style Selector="Border.Danger">
+            <Setter Property="BorderBrush" Value="#df1d1d"/>
+            <Setter Property="Background" Value="#382125"/>
+            <Style Selector="^ i|Icon">
+                <Setter Property="Value" Value="mdi-alert"/>
+            </Style>
+        </Style>
+        
+        <Style Selector="Border.Warning">
+            <Setter Property="BorderBrush" Value="#ecdd0f"/>
+            <Setter Property="Background" Value="#383925"/>
+            <Style Selector="^ i|Icon">
+                <Setter Property="Value" Value="mdi-alert-box"/>
+            </Style>
+        </Style>
+            
+        <Style Selector="Border.Success">
+            <Setter Property="BorderBrush" Value="#00ff15"/>
+            <Setter Property="Background" Value="#1e3b28"/>
+            <Style Selector="^ i|Icon">
+                <Setter Property="Value" Value="mdi-checkbox-marked"/>
+            </Style>
+        </Style>
+        
+        <Style Selector="Border.Info">
+            <Setter Property="BorderBrush" Value="#5978ff"/>
+            <Setter Property="Background" Value="#2d3743"/>
+            <Style Selector="^ i|Icon">
+                <Setter Property="Value" Value="mdi-information"/>
+            </Style>
+        </Style>
+        
+        <Style Selector="Button.Transparent">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style Selector="^:pointerover /template/ ContentPresenter">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+            </Style>
+        </Style>
+    </UserControl.Styles>
+    
+    <UserControl.Resources>
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+    </UserControl.Resources>
+
+    <Border 
+        CornerRadius="10" 
+        BorderThickness="4 0 0 0" 
+        Width="350" 
+        Padding="16"
+        Classes.Close="{Binding IsClosing}"
+        Classes.Danger="{Binding IsDanger}"
+        Classes.Warning="{Binding IsWarning}"
+        Classes.Success="{Binding IsSuccess}"
+        Classes.Info="{Binding IsInfo}"
+    >
+        <Grid ColumnDefinitions="Auto 8 * 8 Auto">
+            <StackPanel>
+                <i:Icon FontSize="32" Margin="0 4"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <Label FontSize="18" Content="{Binding Title}"/>
+                <TextBlock Text="{Binding Desc}" TextWrapping="Wrap"/>
+            </StackPanel>
+            <Button Grid.Column="4" Classes="Transparent" Command="{Binding CloseToast}">
+                <i:Icon Value="mdi-close" FontSize="18"/>
+            </Button>
+        </Grid>
+    </Border>
+</UserControl>

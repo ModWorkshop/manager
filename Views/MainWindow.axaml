@@ -69,55 +69,59 @@
 			<Setter Property="Background" Value="{DynamicResource CardSelectedBackgroundBrush}"/>
 		</Style>
 	</Window.Styles>
-	<Grid ZIndex="10">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="90"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-		<Grid VerticalAlignment="Stretch" Grid.Column="0" Margin="0 0 12 0" Background="{DynamicResource NavBackgroundBrush}">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="152"/>
-			</Grid.RowDefinitions>
-			<ListBox 
-				ItemsSource="{Binding Games}"
-				ScrollViewer.VerticalScrollBarVisibility="Hidden"
-				SelectedItem="{Binding CurrentGame}"
-				Classes="ThumbList"
-				Grid.Row="0"
-			>
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<Border ClipToBounds="True" CornerRadius="10">
-							<Image
-								Width="42"
-								Height="42"
-								Classes="GameButton"
-								Stretch="UniformToFill"
-								asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
-							/>
-						</Border>
+	<Panel>
 
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+		<Grid ZIndex="10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="90"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid VerticalAlignment="Stretch" Grid.Column="0" Margin="0 0 12 0" Background="{DynamicResource NavBackgroundBrush}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="152"/>
+				</Grid.RowDefinitions>
+				<ListBox
+					ItemsSource="{Binding Games}"
+					ScrollViewer.VerticalScrollBarVisibility="Hidden"
+					SelectedItem="{Binding CurrentGame}"
+					Classes="ThumbList"
+					Grid.Row="0"
+				>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Border ClipToBounds="True" CornerRadius="10">
+								<Image
+									Width="42"
+									Height="42"
+									Classes="GameButton"
+									Stretch="UniformToFill"
+									asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
+								/>
+							</Border>
 
-			<ListBox ItemsSource="{Binding OtherPages}" SelectedItem="{Binding CurrentOtherPage}" Classes="ThumbList" Grid.Row="1">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<Border ClipToBounds="True" CornerRadius="10">
-							<Image
-								Width="42"
-								Height="42"
-								Classes="GameButton"
-								Stretch="UniformToFill"
-								asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
-							/>
-						</Border>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+
+				<ListBox ItemsSource="{Binding OtherPages}" SelectedItem="{Binding CurrentOtherPage}" Classes="ThumbList" Grid.Row="1">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Border ClipToBounds="True" CornerRadius="10">
+								<Image
+									Width="42"
+									Height="42"
+									Classes="GameButton"
+									Stretch="UniformToFill"
+									asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
+								/>
+							</Border>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</Grid>
+			<TransitioningContentControl Content="{Binding CurrentPage}" Grid.Column="1"/>
 		</Grid>
-		<TransitioningContentControl Content="{Binding CurrentPage}" Grid.Column="1"/>
-	</Grid>
+		<views:ToasterView ZIndex="20" DataContext="{Binding Toaster}" Padding="8"/>
+	</Panel>
 </Window>

@@ -4,6 +4,7 @@ using GameFinder.Common;
 using MWSManager.Models.Games;
 using MWSManager.Services;
 using MWSManager.Structures;
+using MWSManager.ViewModels;
 using Serilog;
 using SharpCompress.Archives;
 using SharpCompress.Readers;
@@ -13,6 +14,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAvalonia.UI.Controls;
+using Avalonia.Controls.Notifications;
+using Splat;
 
 namespace MWSManager.Models;
 
@@ -133,8 +137,14 @@ public class ModInstall
 
         foreach (var mod in mods)
         {
-            mod.Move(mod.InstallDir);
-            mod.Register();
+            if (mod.Move(mod.InstallDir))
+            {
+                Locator.Current.GetService<ToasterViewModel>()?.AddToast(new ToastViewModel(ToastType.Success, "Success!", $"New Mod: {mod.Name} has been installed!"));
+                mod.Register();
+            } else
+            {
+                Locator.Current.GetService<ToasterViewModel>()?.AddToast(new ToastViewModel(ToastType.Danger, "Failed to install mod", "Couldn't move a folder."));
+            }
         }
 
         Directory.Delete(TempPath);

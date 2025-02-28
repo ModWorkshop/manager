@@ -184,7 +184,7 @@ namespace MWSManager.Models
         /// <summary>
         /// Moves the mod into a different directory
         /// </summary>
-        public void Move(string dir, bool prefixGamePath = true)
+        public bool Move(string dir, bool prefixGamePath = true)
         {
             if (ModPath == null)
             {
@@ -217,11 +217,13 @@ namespace MWSManager.Models
                     Directory.Delete(oldModPath, true);
                 }
                 Log.Information("Move Success");
+                return true;
             }
             catch (Exception e)
             {
                 Log.Error("Couldn't move: {0}", e);
             }
+            return false;
         }
 
         public void Delete()
