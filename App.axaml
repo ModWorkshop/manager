@@ -5,7 +5,8 @@
 			 xmlns:sty="using:FluentAvalonia.Styling"
 			 xmlns:semi="https://irihi.tech/semi"
 			 xmlns:labs="using:Avalonia.Labs.Controls"
-             RequestedThemeVariant="Default">
+			 xmlns:themes="clr-namespace:ShadUI;assembly=ShadUI"
+             RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
 	<Application.DataTemplates>
@@ -18,10 +19,15 @@
 			<Setter Property="IsHitTestVisible" Value="False"/>
 		</Style>
 
-		<sty:FluentAvaloniaTheme PreferUserAccentColor="True"/>
+		<!--sty:FluentAvaloniaTheme PreferUserAccentColor="True"/-->
 
 		<labs:ControlThemes/>
+		
+		
 		<StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+
+		<FluentTheme />
+		<themes:ShadTheme />
 
 	</Application.Styles>
 </Application>

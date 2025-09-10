@@ -17,11 +17,14 @@ using Serilog;
 using ReactiveUI;
 using MWSManager.Models.Providers;
 using ReactiveUI.SourceGenerators;
+using ShadUI;
+using Splat;
 
 namespace MWSManager.ViewModels;
 
 internal class GameDefinition
 {
+    public string? Name;
     public uint? SteamId;
     public uint? MWSId;
     public string? EpicId;
@@ -39,8 +42,6 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<GamePageViewModel> Games { get; set; } = [];
     public ObservableCollection<PageViewModel> Pages { get; set; } = [];
     public ObservableCollection<PageViewModel> OtherPages { get; set; } = [];
-
-    public ToasterViewModel Toaster { get; }
     
     public DownloadsPageViewModel Downloads { get; }
 
@@ -50,34 +51,44 @@ public partial class MainWindowViewModel : ViewModelBase
     private PageViewModel currentPage;
 
     [Reactive]
+    private string currentPageName;
+
+    [Reactive]
     private GamePageViewModel? currentGame;
 
     [Reactive]
     private PageViewModel? currentOtherPage;
 
-    public MainWindowViewModel(ToasterViewModel toaster)
+    [Reactive]
+    private DialogManager dialogManager;
+
+    [Reactive]
+    private ToastManager toastManager;
+
+    private readonly GamesService gamesService;
+
+    public MainWindowViewModel(ToastManager tm, DialogManager dm, GamesService gs, DownloadsPageViewModel downloadsPageViewModel)
     {
-        Downloads = new DownloadsPageViewModel() { 
-            Window = this
-        };
+        Downloads = downloadsPageViewModel;
 
         OtherPages.Add(Downloads);
         OtherPages.Add(new SettingsPageViewModel());
-
-        LoadGames();
 
         this.WhenAnyValue(x => x.CurrentGame).Subscribe(x => OnCurrentGameChanged());
         this.WhenAnyValue(x => x.CurrentPage).Subscribe(x => OnCurrentPageChanging());
         this.WhenAnyValue(x => x.CurrentOtherPage).Subscribe(x => OnCurrentOtherPageChanged());
 
         Instance = this;
-        Toaster = toaster;
+        toastManager = tm;
+        dialogManager = dm;
+        gamesService = gs;
+
+        LoadGames();
     }
 
     public void LoadGames()
     {
-        var gs = GamesService.Instance;
-        foreach (var game in gs.Games)
+        foreach (var game in gamesService.Games)
         {
             var gv = new GamePageViewModel(game);
             Games.Add(gv);
@@ -92,7 +103,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void OnCurrentPageChanging()
     {
-
         if (CurrentPage != null)
         {
             CurrentPage.OnPageOpened();

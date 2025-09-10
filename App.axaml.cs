@@ -1,15 +1,11 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.Steam;
 using MWSManager.Models;
 using MWSManager.ViewModels;
 using MWSManager.Views;
-using NexusMods.Paths;
 using System;
 using System.Diagnostics;
-using HotAvalonia;
 using URIScheme;
 using System.Reflection;
 using System.Threading;
@@ -23,8 +19,8 @@ using System.Runtime.InteropServices;
 using Serilog;
 using System.IO;
 using Splat;
-using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.Avalonia;
+using ShadUI;
+using System.Collections.Generic;
 
 namespace MWSManager;
 
@@ -37,20 +33,17 @@ public partial class App : Application
     public static extern void FreeConsole();
 
     public static MainWindowViewModel MainWindowViewModelService => Locator.Current.GetService<MainWindowViewModel>()!;
-    public static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
+
+    private List<BaseService> Services = [];
+
+    private UpdatesService updatesService => Locator.Current.GetService<UpdatesService>()!;
 
     public override void Initialize()
     {
-        this.EnableHotReload(); // Ensure this line **precedes** `AvaloniaXamlLoader.Load(this);
-
-#if DEBUG
-        AllocConsole();
-#else
-        if (File.Exists("developer.txt"))
-        {
+        //if (File.Exists("developer.txt"))
+        //{
             AllocConsole();
-        }
-#endif
+        //}
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .WriteTo.File("log.txt")
@@ -69,14 +62,25 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
 
         var build = Locator.CurrentMutable;
-        build.RegisterLazySingleton(() => (IDialogService)new DialogService(
-            new DialogManager(
-                viewLocator: new ViewLocator(),
-                dialogFactory: new DialogFactory().AddFluent(FluentMessageBoxType.TaskDialog)),
-            viewModelFactory: x => Locator.Current.GetService(x)));
+        //build.RegisterLazySingleton(() => (IDialogService)new DialogService(
+        //    new DialogManager(
+        //        viewLocator: new ViewLocator(),
+        //        dialogFactory: new DialogFactory().AddFluent(FluentMessageBoxType.TaskDialog)),
+        //    viewModelFactory: x => Locator.Current.GetService(x)));
 
-        build.RegisterLazySingleton(() => new ToasterViewModel());
-        
+        build.RegisterLazySingleton(() => new DialogManager());
+        build.RegisterLazySingleton(() => new ToastManager());
+        build.RegisterConstant(new GamesService());
+        build.RegisterConstant(new UpdatesService());
+
+        Services.Add(Locator.Current.GetService<GamesService>()!);
+        Services.Add(Locator.Current.GetService<UpdatesService>()!);
+        foreach (var s in Services)
+        {
+            s.Setup();
+        }
+
+        SplatRegistrations.Register<DownloadsPageViewModel>();
         SplatRegistrations.Register<MainWindowViewModel>();
         SplatRegistrations.SetupIOC();
     }
@@ -114,7 +118,7 @@ public partial class App : Application
 
             if (provider != null && action != null && id != null)
             {
-                Dispatcher.UIThread.Post(() => UpdatesService.Instance.URISchemeHandle(provider.Value, action.Value, id.Value));
+                Utils.RunInUI(() => updatesService.URISchemeHandle(provider.Value, action.Value, id.Value));
             }
         }
     }

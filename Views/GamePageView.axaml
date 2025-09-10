@@ -3,16 +3,18 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:MWSManager.ViewModels"
-			 xmlns:ui="using:FluentAvalonia.UI.Controls"
+			 xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
 			 xmlns:views="using:MWSManager.Views"
 			 mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="200"
 			 x:DataType="vm:GamePageViewModel"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+xmlns:asyncimageloader="using:AsyncImageLoader"
 			 x:Class="MWSManager.Views.GamePageView">
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="500"/>
 			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="400"/>
 		</Grid.ColumnDefinitions>
 		<Grid Grid.Column="0">
 			<Grid.RowDefinitions>
@@ -20,17 +22,91 @@
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 
-			<TextBox Grid.Row="0" Watermark="Search..." Margin="0 10 0 0" Text="{Binding SearchModQuery}"/>
+			<TextBox Grid.Row="0" Watermark="Search..." Margin="18 0" Text="{Binding SearchModQuery}"/>
 
 			<TextBlock IsVisible="{Binding !HasMods}"  Margin="16" TextAlignment="Center" Grid.Row="1">No mods found!</TextBlock>
-			<ListBox
+
+			<DataGrid
+				Grid.Row="1"
+				Margin="20"
+				ItemsSource="{Binding OrderedMods}"
+				SelectedItem="{Binding SelectedMod}"
+				IsReadOnly="True"
+				GridLinesVisibility="Horizontal"
+				CanUserReorderColumns="False"
+				CanUserResizeColumns="True"
+				CanUserSortColumns="True"
+			>
+				<DataGrid.Columns>
+					<DataGridCheckBoxColumn CanUserSort="False">
+						<DataGridCheckBoxColumn.Header>
+							<CheckBox
+                                x:Name="SelectToggler"
+                                Command="{Binding ToggleSelectionCommand}"
+                                CommandParameter="{Binding #SelectToggler.IsChecked}"
+                                IsChecked="{Binding SelectAll}" />
+						</DataGridCheckBoxColumn.Header>
+					</DataGridCheckBoxColumn>
+
+					<DataGridTemplateColumn CanUserResize="False" CanUserSort="False">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<asyncimageloader:AdvancedImage
+									Width="90"
+									Height="45"
+									Stretch="UniformToFill"
+									Source="{Binding Thumbnail}"
+								/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTextColumn Header="Name" Binding="{Binding Mod.Name}"/>
+					<DataGridTextColumn Header="Authors" Binding="{Binding Authors}" Width="*"/>
+					<DataGridTemplateColumn CanUserResize="False" CanUserSort="False" Width="80">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<shadui:SimpleDropdown
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center"
+									Classes="Icon Grid"
+									CornerRadius="{DynamicResource MdCornerRadius}"
+									PopupPlacement="BottomEdgeAlignedLeft"
+									PopupWidth="190">
+									<shadui:SimpleDropdown.TriggerContent>
+										<i:Icon Value="mdi-dots-vertical" FontSize="24" />
+									</shadui:SimpleDropdown.TriggerContent>
+									<shadui:SimpleDropdown.MenuLabel>
+										<TextBlock Classes="Caption Muted" Text="Actions" />
+									</shadui:SimpleDropdown.MenuLabel>
+									<Separator />
+									<Button 
+										Content="Open on ModWorkshop"
+										IsVisible="{Binding PageUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+										Command="{Binding OpenPageUrl}"
+									/>
+									<Button Content="Open in File Explorer" Command="{Binding BrowseToModPathCommand}"/>
+									<Button Content="Check for Updates" />
+									<Button Content="Delete" Command="{Binding DeleteModCommand}"/>
+								</shadui:SimpleDropdown>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+				<DataGrid.Styles>
+					<Style Selector="DataGridRow">
+						<Setter Property="Cursor" Value="Hand" />
+					</Style>
+				</DataGrid.Styles>
+			</DataGrid>
+			
+			<!--ListBox
 				Grid.Row="1"
 				Margin="0 4 0 8"
 				Classes="FluentList"
 				IsVisible="{Binding HasMods}"
 				ItemsSource="{Binding OrderedMods}"
 				SelectedItem="{Binding SelectedMod}"
-			/>
+			/-->
 		</Grid>
 		<views:ModInfoView Grid.Column="1" DataContext="{Binding ModInfo}"/>
 	</Grid>

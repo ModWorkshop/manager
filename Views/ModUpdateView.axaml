@@ -4,21 +4,29 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:MWSManager.ViewModels"
 			 xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
 			 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
 			 x:DataType="vm:ModUpdateViewModel"
 			 x:Class="MWSManager.Views.ModUpdateView">
 
-	<StackPanel Spacing="8">
-		<StackPanel Spacing="8" Orientation="Horizontal">
-			<StackPanel>
-				<TextBlock Text="{Binding Update.Name}" TextWrapping="Wrap" Width="300"/>
+	<Border Classes="Card">
+		<Grid ColumnDefinitions="75*,25*" RowDefinitions="*,Auto">
+			<StackPanel Grid.Column="0" Grid.Row="0">
+				<TextBlock Text="{Binding Update.Name}" TextWrapping="Wrap"/>
 				<TextBlock IsVisible="{Binding Update.NextVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-					Update Available: <TextBlock Text="{Binding Update.Version}"/> -> <TextBlock Text="{Binding Update.NextVersion}"/>
+					<TextBlock Text="New Version:"/> <TextBlock Text="{Binding Update.NextVersion}"/>
 				</TextBlock>
 			</StackPanel>
-		</StackPanel>
-		<Button Command="{Binding DownloadUpdateCommand}" IsVisible="{Binding !Update.FreshInstall}" HorizontalAlignment="Left">Update</Button>
-		<ProgressBar Value="{Binding DownloadPercent}" Margin="0 8 0 0" ShowProgressText="True"/>
-	</StackPanel>
+			<Button
+				Command="{Binding DownloadUpdateCommand}"
+				IsVisible="{Binding !Update.FreshInstall}"
+				Classes="Primary"
+				Grid.Column="1" Grid.Row="0"
+			>
+				Update
+			</Button>
+			<ProgressBar Value="{Binding DownloadPercent}" Margin="0 16 0 0" ShowProgressText="True" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+		</Grid>
+	</Border>
 
 </UserControl>

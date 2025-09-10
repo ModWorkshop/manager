@@ -1,15 +1,9 @@
 ﻿using MWSManager.Models;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MWSManager.ViewModels;
 

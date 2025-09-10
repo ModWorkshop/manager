@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="App.axaml" value="MWSManager.csproj" />
+        <entry key="Views/DownloadsPageView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/GamePageView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/MainWindow.axaml" value="MWSManager.csproj" />
+        <entry key="Views/ModInfoView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/ModUpdateView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/ModView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/Toast.axaml" value="MWSManager.csproj" />
+        <entry key="Views/ToastView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/Toaster.axaml" value="MWSManager.csproj" />
+        <entry key="Views/ToasterView.axaml" value="MWSManager.csproj" />
+        <entry key="Views/Toat.axaml" value="MWSManager.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

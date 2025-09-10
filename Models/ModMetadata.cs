@@ -11,6 +11,12 @@ public class ModMetadataUpdate
 {
     public required string provider;
     public required string id;
+
+    public string name;
+    public string folderName;
+    public string installDir;
+    public string versionFile;
+    public bool dontDelete;
 }
 
 public class ModMetadata

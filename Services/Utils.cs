@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Threading;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,6 +57,11 @@ namespace MWSManager.Services
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
                 }
             }
+        }
+
+        public static void RunInUI(Action action)
+        {
+            Dispatcher.UIThread.Post(action);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MWSManager.Structures;
+﻿using MWSManager.Services;
+using MWSManager.Structures;
 using Serilog;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,7 +51,7 @@ public class Game
     public Game(string name, string gamePath, dynamic? extraData = null)
     {
         ExtraData = extraData;
-        GamePath = gamePath;
+        GamePath = PathUtils.NormalizePath(gamePath);
         Name = name;
     }
 
@@ -185,6 +186,21 @@ public class Game
     public virtual bool ShouldExtract(string fileName, Stream stream)
     {
         return true;
+    }
+
+    public Mod? FindModWithPath(string path)
+    {
+        var pathWithoutGame = PathUtils.NormalizePath(path.Replace(GamePath + "/", ""));
+        foreach (var mod in Mods)
+        {
+            var modPathWithoutGame = mod.ModPath.Replace(GamePath + "/", "");
+            if (pathWithoutGame == modPathWithoutGame)
+            {
+                return mod;
+            }
+        }
+
+        return null;
     }
 }
 

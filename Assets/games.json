@@ -1,5 +1,6 @@
 ﻿{
   "payday2": {
+    "Name": "PAYDAY 2",
     "SteamId": 218620,
     "MWSId": 1,
     "EpicId": "384f75fdd6b34f63a2daace1a3c5dab0",
@@ -8,6 +9,7 @@
   },
 
   "raidww2": {
+    "Name":  "RAID: WW2",
     "SteamID": 414740,
     "MWSId": 543,
     "ClassName": "Diesel.RAIDWW2Game",
@@ -15,6 +17,7 @@
   },
 
   "pdth": {
+    "Name": "PAYDAY: The Heist",
     "SteamID": 24240,
     "MWSId": 2,
     "ClassName": "Diesel.PDTHGame",
@@ -22,6 +25,7 @@
   },
 
   "payday3": {
+    "Name": "PAYDAY 3",
     "ExtraData": {
       "UnrealName": "PAYDAY3"
     },
@@ -32,6 +36,7 @@
   },
 
   "crimeboss": {
+    "Name": "Crime Boss",
     "ExtraData": {
       "UnrealName": "CrimeBoss"
     },
@@ -48,6 +53,7 @@
   },
 
   "noita": {
+    "Name": "Noita",
     "SteamID": 881100,
     "MWSId": 752,
     "Icon": "avares://MWSManager/Assets/games/noita-icon.png",
@@ -55,6 +61,7 @@
   },
 
   "cassette-beasts": {
+    "Name": "Cassette Beasts",
     "SteamID": 1321440,
     "MWSID": 850,
     "Icon": "avares://MWSManager/Assets/games/cassette-icon.png",
@@ -62,6 +69,7 @@
   },
 
   "road-to-vostok": {
+    "Name": "Road to Vostok",
     "SteamID": 2141300,
     "MWSID": 864,
     "Icon": "avares://MWSManager/Assets/games/rtv-icon.png",
@@ -69,6 +77,7 @@
   },
 
   "monster-sanctuary": {
+    "Name": "Monster sanctuary",
     "SteamId": 814370,
     "MWSID": 799,
     "Icon": "avares://MWSManager/Assets/games/ms-icon.png",

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Serilog;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -92,16 +93,8 @@ namespace MWSManager.Models
             FileAttributes attrs = File.GetAttributes(modPath);
             IsFile = !attrs.HasFlag(FileAttributes.Directory);
 
-            ModPath = modPath;
-
-            if (installDir == null)
-            {
-                // Goes one folder back as it is very likely installation 
-                InstallDir = Path.GetDirectoryName(Path.GetFullPath(modPath)).Replace(Path.GetFullPath(game.GamePath), "");
-            } else
-            {
-                InstallDir = installDir;
-            }
+            ModPath = PathUtils.NormalizePath(modPath);
+            InstallDir = installDir;
 
             LoadMetadata();
         }
@@ -168,14 +161,9 @@ namespace MWSManager.Models
                     InstallDir = Game.ParsePath(metadata.installDir);
                 }
 
-                UpdatesService updatesService = UpdatesService.Instance;
-
                 foreach (var up in metadata.updates)
                 {
-                    Log.Information("Register Mod Update in Mod {0}, Provider: {1}, ID: {2}", Name, up.provider, up.id);
-                    var update = new ModUpdate(this, up.provider, up.id, Version);
-                    Updates.Add(update);
-                    //updatesService.AddUpdate(update); Do this in some form of full setup?
+                    Updates.Add(new ModUpdate(this, up.provider, up.id, Version));
                 }
             }
         }
@@ -250,7 +238,7 @@ namespace MWSManager.Models
         {
             Game.AddMod(this);
 
-            var updatesService = UpdatesService.Instance;
+            var updatesService = Locator.Current.GetService<UpdatesService>()!;
 
             foreach (var update in Updates)
             {
@@ -262,7 +250,7 @@ namespace MWSManager.Models
         {
             Game.RemoveMod(this);
 
-            var updatesService = UpdatesService.Instance;
+            var updatesService = Locator.Current.GetService<UpdatesService>()!;
 
             foreach (var update in Updates)
             {

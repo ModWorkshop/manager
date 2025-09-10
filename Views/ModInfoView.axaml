@@ -23,8 +23,8 @@
 				<StackPanel DockPanel.Dock="Top" Spacing="16">
 					<Border ClipToBounds="True" CornerRadius="10" HorizontalAlignment="Left">
 						<asyncImageLoader:AdvancedImage
-							Width="300"
-							Height="150"
+							Width="350"
+							Height="175"
 							Stretch="UniformToFill"
 							Source="{Binding Thumbnail}"
 						/>
@@ -34,8 +34,8 @@
 						<TextBlock IsVisible="{Binding Mod.Desc, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 							<TextBlock Text="{Binding Mod.Desc}"/>
 						</TextBlock>
-						<TextBlock IsVisible="{Binding AuthorsCommaSep, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-							<TextBlock FontWeight="Bold">By</TextBlock> <TextBlock Text="{Binding AuthorsCommaSep}"/>
+						<TextBlock IsVisible="{Binding Authors, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+							<TextBlock FontWeight="Bold">By</TextBlock> <TextBlock Text="{Binding Authors}"/>
 						</TextBlock>
 						<TextBlock IsVisible="{Binding Mod.Version, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 							<TextBlock FontWeight="Bold">Version</TextBlock> <TextBlock Text="{Binding Mod.Version}"/>
@@ -45,27 +45,13 @@
 					<Separator/>
 
 					<StackPanel DockPanel.Dock="Top">
-						<TextBlock Classes="H3" Theme="{DynamicResource TitleTextBlock}" Text="Updates"/>
-						<ListBox Classes="FluentList ModUpdates" ItemsSource="{Binding Updates}">
-							<ListBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<WrapPanel Orientation="Horizontal"/>
-								</ItemsPanelTemplate>
-							</ListBox.ItemsPanel>
-						</ListBox>
+						<TextBlock Classes="H3" Margin="0 0 0 20" Theme="{DynamicResource TitleTextBlock}" Text="Updates"/>
+
+						<ItemsControl ItemsSource="{Binding Updates}" IsVisible="{Binding HasUpdates}"/>
 						<Border IsVisible="{Binding !HasUpdates}">
-							<TextBlock HorizontalAlignment="Center" Text="This mod contains no updates."/>
+							<TextBlock HorizontalAlignment="Center" Text="Found no updates."/>
 						</Border>
 					</StackPanel>
-				</StackPanel>
-
-				<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Left" VerticalAlignment="Bottom" Spacing="4">
-					<Button IsVisible="{Binding PageUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Command="{Binding OpenPageUrlCommand}">
-						ModWorkshop Page
-					</Button>
-					<Button Command="{Binding BrowseToModPathCommand}">Browse...</Button>
-
-					<Button Command="{Binding DeleteModCommand}" Classes="Danger">Delete</Button>
 				</StackPanel>
 			</DockPanel>
 		</Border>

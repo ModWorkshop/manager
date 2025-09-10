@@ -3,6 +3,7 @@ using MWSManager.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Serilog;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,8 +86,7 @@ public partial class ModUpdate : ReactiveObject
     public void DownloadAndInstallUpdate()
     {
         Status = ModUpdateStatus.Downloading;
-        UpdatesService updates = UpdatesService.Instance;
-        updates.DownloadAndInstall(this);
+        Locator.Current.GetService<UpdatesService>()!.DownloadAndInstall(this);
     }
 }
 

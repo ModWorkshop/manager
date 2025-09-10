@@ -26,8 +26,8 @@
 			</Border>
 			<StackPanel Spacing="8">
 				<TextBlock Classes="ModInfo" Text="{Binding Mod.Name}" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" Width="250" HorizontalAlignment="Left"/>
-				<TextBlock Classes="ModInfo" IsVisible="{Binding AuthorsCommaSep, Converter={x:Static ObjectConverters.IsNotNull}}">
-					<TextBlock FontWeight="Bold">By</TextBlock> <TextBlock Text="{Binding AuthorsCommaSep}"/>
+				<TextBlock Classes="ModInfo" IsVisible="{Binding Authors, Converter={x:Static ObjectConverters.IsNotNull}}">
+					<TextBlock FontWeight="Bold">By</TextBlock> <TextBlock Text="{Binding Authors}"/>
 				</TextBlock>
 
 				<TextBlock Classes="ModInfo" IsVisible="{Binding Mod.Version, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">

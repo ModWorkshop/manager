@@ -1,4 +1,5 @@
 ﻿using MWSManager.Structures;
+using Serilog;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -85,7 +86,8 @@ public class UE4Game : Game
 
         if (installDir != null)
         {
-            var mod = new Mod(this, node.Parent!.FullPath);
+            Log.Information("Found location to install node named {0} into {1}", name, installDir);
+            var mod = new Mod(this, node!.FullPath);
             Mods.Add(mod);
             mod.InstallDir = installDir;
 

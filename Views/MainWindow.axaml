@@ -1,4 +1,6 @@
-<Window xmlns="https://github.com/avaloniaui"
+<shadui:Window
+		xmlns="https://github.com/avaloniaui"
+		x:Class="MWSManager.Views.MainWindow"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:MWSManager.ViewModels"
         xmlns:views="using:MWSManager.Views"
@@ -7,9 +9,11 @@
 		xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
 		xmlns:ui="using:FluentAvalonia.UI.Controls"
 		xmlns:labs="using:Avalonia.Labs.Panels"
+		xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+		xmlns:i="https://github.com/projektanker/icons.avalonia"
         mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="900"
-        x:Class="MWSManager.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+		Background="#212529"
         Icon="/Assets/icon.ico"
         Title="ModWorkshop Manager"
 		>
@@ -19,8 +23,20 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
+	<shadui:Window.LogoContent>
+		<Image
+            Width="20"
+            Height="20"
+            Margin="8,8,0,8"
+            Source="avares://MWSManager/Assets/icon.ico" />
+	</shadui:Window.LogoContent>
 
-	<Window.Resources>
+	<shadui:Window.Hosts>
+		<shadui:DialogHost Manager="{Binding DialogManager}" Owner="{Binding RelativeSource={RelativeSource AncestorType=shadui:Window}}" />
+		<shadui:ToastHost Manager="{Binding ToastManager}" />
+	</shadui:Window.Hosts>
+
+	<shadui:Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.ThemeDictionaries>
 				<ResourceDictionary x:Key='Default'>
@@ -30,22 +46,30 @@
 					<SolidColorBrush x:Key="CardSelectedBackgroundBrush">#d9d9d9</SolidColorBrush>
 				</ResourceDictionary>
 				<ResourceDictionary x:Key='Dark'>
-					<SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush">#212529</SolidColorBrush>
 					<SolidColorBrush x:Key="NavBackgroundBrush">#32373e</SolidColorBrush>
 					<SolidColorBrush x:Key="CardBackgroundBrush">#32373e</SolidColorBrush>
 					<SolidColorBrush x:Key="CardSelectedBackgroundBrush">#393f47</SolidColorBrush>
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
 		</ResourceDictionary>
-	</Window.Resources>
+	</shadui:Window.Resources>
 
 
-	<Window.Styles>
-		<Style Selector="ListBox.FluentList">
-			<Setter Property="Padding" Value="0 8 16 0"/>
-			<Setter Property="HorizontalAlignment" Value="Center"/>
+	<shadui:Window.Styles>
+		<Style Selector="TextBlock.H1,TextBlock.H2,TextBlock.H3,TextBlock.H4,TextBlock.H5,TextBlock.H6">
+			<Setter Property="FontWeight" Value="ExtraBold"/>
 		</Style>
-		<Style Selector="ListBox.FluentList ListBoxItem">
+		<Style Selector="TextBlock.H3">
+			<Setter Property="FontSize" Value="16"/>
+		</Style>
+		<Style Selector="ProgressBar">
+			<Setter Property="Background" Value="#393f47"/>
+			<Setter Property="CornerRadius" Value="8"/>
+		</Style>
+		<Style Selector="ProgressBar /template/ Border#PART_Indicator">
+			<Setter Property="CornerRadius" Value="8"/>
+		</Style>
+		<Style Selector="Border.Card">
 			<Setter Property="Padding" Value="16"/>
 			<Setter Property="Margin" Value="0 0 0 4"/>
 			<Setter Property="CornerRadius" Value="8"/>
@@ -68,60 +92,89 @@
 		<Style Selector="ListBox.ThumbList ListBoxItem:selected /template/ ContentPresenter">
 			<Setter Property="Background" Value="{DynamicResource CardSelectedBackgroundBrush}"/>
 		</Style>
-	</Window.Styles>
+	</shadui:Window.Styles>
+
 	<Panel>
+		<Grid ColumnDefinitions="Auto *">
+			<shadui:Sidebar
+				Grid.Column="0"
+				Width="255"
+				MinWidth="56"
+				Padding="8"
+				BorderThickness="0,0,1,0"
+				CurrentRoute="{Binding CurrentPage}"
+				Expanded="{Binding #Toggler.IsChecked}"
+				Background="#32373e"
+				ItemIconContentSpacing="12">
 
-		<Grid ZIndex="10">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="90"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid VerticalAlignment="Stretch" Grid.Column="0" Margin="0 0 12 0" Background="{DynamicResource NavBackgroundBrush}">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="152"/>
-				</Grid.RowDefinitions>
-				<ListBox
-					ItemsSource="{Binding Games}"
-					ScrollViewer.VerticalScrollBarVisibility="Hidden"
-					SelectedItem="{Binding CurrentGame}"
-					Classes="ThumbList"
-					Grid.Row="0"
-				>
-					<ListBox.ItemTemplate>
+				<ItemsControl ItemsSource="{Binding Games}">
+					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<Border ClipToBounds="True" CornerRadius="10">
-								<Image
-									Width="42"
-									Height="42"
-									Classes="GameButton"
-									Stretch="UniformToFill"
-									asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
-								/>
-							</Border>
-
+							<shadui:SidebarItem Content="{Binding Game.Name}" Route="{Binding $self}" Command="{Binding SelectRouteCommand}">
+								<shadui:SidebarItem.Icon>
+									<Border ClipToBounds="True" CornerRadius="10">
+										<Image
+											Width="24"
+											Height="24"
+											Classes="GameButton"
+											Stretch="UniformToFill"
+											asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
+											/>
+									</Border>
+								</shadui:SidebarItem.Icon>
+							</shadui:SidebarItem>
 						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 
-				<ListBox ItemsSource="{Binding OtherPages}" SelectedItem="{Binding CurrentOtherPage}" Classes="ThumbList" Grid.Row="1">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Border ClipToBounds="True" CornerRadius="10">
-								<Image
-									Width="42"
-									Height="42"
-									Classes="GameButton"
-									Stretch="UniformToFill"
-									asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
-								/>
-							</Border>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</Grid>
-			<TransitioningContentControl Content="{Binding CurrentPage}" Grid.Column="1"/>
+				<shadui:Sidebar.Footer>
+
+
+					<ItemsControl ItemsSource="{Binding OtherPages}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<shadui:SidebarItem Content="{Binding Name}" Route="{Binding $self}" Command="{Binding SelectRouteCommand}">
+									<shadui:SidebarItem.Icon>
+										<Border ClipToBounds="True" CornerRadius="10">
+											<Image
+												Width="24"
+												Height="24"
+												Classes="GameButton"
+												Stretch="UniformToFill"
+												asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}"
+											/>
+										</Border>
+									</shadui:SidebarItem.Icon>
+								</shadui:SidebarItem>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+
+
+				</shadui:Sidebar.Footer>
+			</shadui:Sidebar>
+			<DockPanel Grid.Column="1" LastChildFill="True" VerticalSpacing="16">
+				<Border BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0,0,1" DockPanel.Dock="Top" Background="#32373e">
+					<StackPanel Margin="16" Orientation="Horizontal" Spacing="16">
+						<ToggleButton
+							Name="Toggler"
+							Width="28"
+							Height="28"
+							Padding="6"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Theme="{DynamicResource SideTogglerTheme}"
+						>
+							<Viewbox>
+								<i:Icon Value="mdi-menu" FontSize="24" />
+							</Viewbox>
+						</ToggleButton>
+						<TextBlock VerticalAlignment="Center" Classes="Small" Text="{Binding CurrentPage.Name}" />
+					</StackPanel>
+				</Border>
+				<TransitioningContentControl Content="{Binding CurrentPage}" Grid.Column="1"/>
+			</DockPanel>
 		</Grid>
-		<views:ToasterView ZIndex="20" DataContext="{Binding Toaster}" Padding="8"/>
+
 	</Panel>
-</Window>
+</shadui:Window>

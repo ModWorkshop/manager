@@ -2,47 +2,38 @@
 using GameFinder.Common;
 using GameFinder.RegistryUtils;
 using GameFinder.StoreHandlers.EGS;
-using GameFinder.StoreHandlers.Steam.Models.ValueTypes;
 using GameFinder.StoreHandlers.Steam;
+using GameFinder.StoreHandlers.Steam.Models.ValueTypes;
+using MWSManager.Models.Games;
 using MWSManager.Models.Providers;
 using MWSManager.ViewModels;
 using Newtonsoft.Json;
+using NexusMods.Paths;
 using ReactiveUI;
 using Serilog;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NexusMods.Paths;
-using MWSManager.Models.Games;
 
 namespace MWSManager.Services;
 
-public class GamesService
+public class GamesService : BaseService
 {
-    private GamesService() {
+    public override void Setup()
+    {
         LoadGames();
     }
-    private static GamesService? instance = null;
-    public static GamesService Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = new GamesService();
 
-            return instance;
-        }
-    }
+    public bool Loaded { get; private set; } = false;
 
     public List<Game> Games { get; private set; } = [];
 
     private void LoadGames()
     {
-        var updates = UpdatesService.Instance;
-
         var steamHandler = new SteamHandler(FileSystem.Shared, OperatingSystem.IsWindows() ? WindowsRegistry.Shared : null);
         var epicHandler = new EGSHandler(WindowsRegistry.Shared, FileSystem.Shared);
 
@@ -60,7 +51,7 @@ public class GamesService
 
                 IGame? game = null;
                 string gamePath = "";
-                string gameName = "";
+                string gameName = gameDef.Name;
 
                 var errs = new ErrorMessage[10];
 
@@ -70,7 +61,7 @@ public class GamesService
                     if (steamGame != null)
                     {
                         gamePath = steamGame.Path.GetFullPath();
-                        gameName = steamGame.Name;
+                        //gameName = steamGame.Name;
                     }
 
                     game = steamGame;
@@ -83,7 +74,7 @@ public class GamesService
                     if (egsGame != null)
                     {
                         gamePath = egsGame.InstallLocation.GetFullPath();
-                        gameName = egsGame.DisplayName; // Why the fuck is it inconsistent???
+                        //gameName = egsGame.DisplayName; // Why the fuck is it inconsistent???
                     }
 
                     game = egsGame;
@@ -139,6 +130,6 @@ public class GamesService
             }
         }
 
-        updates.InitialCheckForUpdates();
+        Loaded = true;
     }
 }

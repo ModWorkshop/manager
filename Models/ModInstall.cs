@@ -1,22 +1,24 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
+using Avalonia.Threading;
 using DynamicData;
+using FluentAvalonia.UI.Controls;
 using GameFinder.Common;
 using MWSManager.Models.Games;
 using MWSManager.Services;
 using MWSManager.Structures;
 using MWSManager.ViewModels;
 using Serilog;
+using ShadUI;
 using SharpCompress.Archives;
 using SharpCompress.Readers;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAvalonia.UI.Controls;
-using Avalonia.Controls.Notifications;
-using Splat;
 
 namespace MWSManager.Models;
 
@@ -38,9 +40,15 @@ public class ModInstall
 
     public bool SingleFile => Files.Count == 1 && Folders.Count == 0;
 
+    private ToastManager toastManager;
+    private DialogManager dialogManager;
+
     public ModInstall(ModUpdate update, string fileName, Stream stream)
     {
         Update = update;
+
+        toastManager = Locator.Current.GetService<ToastManager>();
+        dialogManager = Locator.Current.GetService<DialogManager>();
 
         var mwsTemp = Path.Combine(Path.GetTempPath(), "mws-manager");
         var type = Path.GetExtension(fileName).Replace(".", "");
@@ -98,7 +106,7 @@ public class ModInstall
         var mods = FindModsWithMetadataFile(Tree);
 
         // Let the game try figuring out where to put the files
-        // We don't want to mix the two though
+        // We don't want to mix metadata + guessing though, so only do this if no metadata files were found.
         if (mods.Count == 0)
         {
             Log.Information("Found no mods with metadata file, trying to search with game...");
@@ -108,6 +116,10 @@ public class ModInstall
         if (mods.Count == 0)
         {
             Log.Error("Unable to figure out where to install the mod!");
+            Utils.RunInUI(() =>
+                toastManager.CreateToast("Error!").WithContent("Unable to figure out where to install this mod :(").ShowError()
+            );
+
             return;
         }
 
@@ -115,8 +127,14 @@ public class ModInstall
         {
             if (mod.InstallDir == null)
             {
-                Directory.Delete(TempPath);
-                throw new Exception("Attempted to install mods with invalid insall directory. Avoiding doing any action.");
+                Directory.Delete(TempPath, true);
+                Utils.RunInUI(() => toastManager
+                    .CreateToast("Error!")
+                    .WithContent(string.Format("Unable to figure out where to install mod named \"{0}\".\nIt's possible the mod contains invalid metadata", Update.Name))
+                    .ShowError()
+                );
+                return;
+
             }
         }
 
@@ -135,19 +153,70 @@ public class ModInstall
             }
         }
 
-        foreach (var mod in mods)
+        var modInstallSb = new StringBuilder("You've initiated a file install.\n\n");
+        modInstallSb.AppendLine("The file contains the following mods which will be installed in the listed directories:");
+
+        for (int i = 0; i < mods.Count; i++)
         {
-            if (mod.Move(mod.InstallDir))
+            var mod = mods[i];
+
+            modInstallSb.Append($"{i + 1}. {mod.Name} -> {mod.InstallDir}");
+            if (Game.FindModWithPath(Path.Combine(mod.InstallDir, Path.GetFileName(mod.ModPath))) != null)
             {
-                Locator.Current.GetService<ToasterViewModel>()?.AddToast(new ToastViewModel(ToastType.Success, "Success!", $"New Mod: {mod.Name} has been installed!"));
-                mod.Register();
+                modInstallSb.AppendLine("(Already Installed)");
             } else
             {
-                Locator.Current.GetService<ToasterViewModel>()?.AddToast(new ToastViewModel(ToastType.Danger, "Failed to install mod", "Couldn't move a folder."));
+                modInstallSb.AppendLine();
             }
         }
 
-        Directory.Delete(TempPath);
+        if (Update.FreshInstall)
+        {
+            Utils.RunInUI(() => dialogManager
+                .CreateDialog($"{Game.Name} Mod Install", modInstallSb.ToString())
+                .WithPrimaryButton("Install", () => InstallModConfirm(mods))
+                .WithCancelButton("Don't Install")
+                .WithMaxWidth(512)
+                .Show()
+            );
+        } else
+        {
+            InstallModConfirm(mods);
+        }
+    }
+
+    public void InstallModConfirm(List<Mod> mods)
+    {
+        foreach (var mod in mods)
+        {
+            Log.Information("Moving mod to {0}", mod.InstallDir);
+
+            var moved = mod.Move(mod.InstallDir);
+            Utils.RunInUI(() =>
+            {
+                var tm = Locator.Current.GetService<ToastManager>();
+                if (moved)
+                {
+                    mod.Register();
+                    var verb = Update.FreshInstall ? "installed" : "Updated";
+                    tm.CreateToast("Success!").WithContent($"Mod: {mod.Name} has been {verb}!").ShowSuccess();
+                }
+                else
+                {
+                    tm.CreateToast("Failed to install mod.").WithContent("Couldn't move a folder.").ShowError();
+                }
+            });
+        }
+
+        PostInstallCleanUp();
+    }
+
+    public void PostInstallCleanUp()
+    {
+        if (Directory.Exists(TempPath))
+        {
+            Directory.Delete(TempPath);
+        }
     }
 
     /// <summary>
@@ -157,26 +226,26 @@ public class ModInstall
     /// </summary>
     public List<Mod> FindModsWithMetadataFile(PathNode node)
     {
-        List<Mod> Mods = [];
+        List<Mod> mods = [];
 
         if (node.Count == 0)
-            return Mods;
+            return mods;
 
         foreach(var childNode in node.ChildNodes)
         {
             if (childNode.IsFile && childNode.Name == "mws-manager.json")
             {
                 Log.Information("Found a mod: {0}", childNode.Parent!.FullPath);
-                Mods.Add(new Mod(Game, childNode.Parent!.FullPath));
+                mods.Add(new Mod(Game, childNode.Parent!.FullPath));
             }
         }
 
         foreach (var childNode in node.ChildNodes)
         {
-            Mods.AddRange(FindModsWithMetadataFile(childNode));
+            mods.AddRange(FindModsWithMetadataFile(childNode));
         }
 
-        return Mods;
+        return mods;
     }
 
     public string GetRealPath(string path)

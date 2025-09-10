@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using MWSManager.Services;
 using MWSManager.ViewModels;
 using Newtonsoft.Json.Linq;
+using Semver;
 using Serilog;
 using Splat;
 using System;
@@ -37,8 +39,8 @@ public class Provider
 
     /// <summary>
     /// Checks updates for multiple mod update objects.
-    /// It's a good idea to override this method if your provider has a way to check multiple mods at once
-    /// So you don't end up spamming its API / hitting ratelimit
+    /// Note: this attempts to use semver (Ex: 1.0.0) so it's highly recommended to use it. Otherwise it will simply compare the version and nothing else
+    /// TODO: check for updates periodically so to not spam APIs
     /// </summary>
     public virtual async Task CheckMultipleUpdates(List<ModUpdate> updates)
     {
@@ -46,14 +48,20 @@ public class Provider
 
         foreach (var update in updates)
         {
-            var version = await client.GetStringAsync(CheckURL.Replace("$Id$", update.Id));
-            if (version != null && version != update.Version)
+            var url = CheckURL.Replace("$Id$", update.Id);
+            Console.WriteLine("Sending Request: {0}", url);
+            var version = await client.GetStringAsync(url);
+            var isRemoteSemVer = SemVersion.TryParse(version, out var remoteSemVersion);
+            var isLocalSemVer = SemVersion.TryParse(update.Version, out var localSemVersion);
+            var isSemVer = isRemoteSemVer && isLocalSemVer;
+
+            if ((isSemVer && remoteSemVersion!.ComparePrecedenceTo(localSemVersion) > 0) || (!isSemVer && version != update.Version))
             {
-                update.RaiseHasUpdate(version);
+                Dispatcher.UIThread.Post(() => update.RaiseHasUpdate(version));
             }
         }
     }
-
+    
     public virtual async Task StartModUpdate(ModUpdate update)
     {
         try
@@ -70,16 +78,17 @@ public class Provider
     /// <summary>
     /// Download a mod update and try installing it
     /// </summary>
-    public virtual async Task DownloadAndInstall(ModUpdate update)
+    public virtual async Task DownloadAndInstall(ModUpdate update, string? downloadUrl=null)
     {
-        MainWindowViewModel.Instance?.SetCurrentPage("Downloads");
         var client = Utils.GetHTTPClient();
         var mod = update.Mod;
         var game = update.Game;
 
-        Log.Information("Downloading {0} ({1})", update.Id, DownloadURL.Replace("$Id$", update.Id));
+        downloadUrl ??= DownloadURL;
 
-        using var fileResponse = await client.GetAsync(DownloadURL.Replace("$Id$", update.Id), HttpCompletionOption.ResponseHeadersRead);
+        Log.Information("Downloading {0} ({1})", update.Id, downloadUrl.Replace("$Id$", update.Id));
+
+        using var fileResponse = await client.GetAsync(downloadUrl.Replace("$Id$", update.Id), HttpCompletionOption.ResponseHeadersRead);
         fileResponse.EnsureSuccessStatusCode();
 
         IEnumerable<string>? cdString;
@@ -150,7 +159,7 @@ public class Provider
         {
             if (action == "install")
             {
-                Log.Error("Failed to download and install mod with ID {0}. Error: {1}", id, e);
+                Log.Error("Something went wrong while installing mod with ID {0}. Error: {1}", id, e);
             }
             throw;
         }

@@ -15,6 +15,7 @@ public partial class SettingsPageViewModel : PageViewModel
 
     public SettingsPageViewModel()
     {
+        Name = "Settings";
         Thumbnail = "avares://MWSManager/Assets/Settings.png";
 
         Data.WhenAnyPropertyChanged().Subscribe(_ => SettingsService.Instance.Save());

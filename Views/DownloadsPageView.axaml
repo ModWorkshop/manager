@@ -17,17 +17,9 @@
 	</UserControl.Styles>
 
 	<Border Padding="16">
-		<Panel>
-			<ListBox Classes="FluentList ModUpdates" ItemsSource="{Binding Updates}">
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<WrapPanel Orientation="Horizontal"/>
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-			</ListBox>
-
+		<StackPanel>
 			<Panel VerticalAlignment="Top">
-				<TextBlock 
+				<TextBlock
 					Text="No updates or downloads currently active."
 					IsVisible="{Binding !HasUpdates}"
 					HorizontalAlignment="Center"
@@ -37,6 +29,7 @@
 				/>
 				<Button
 					HorizontalAlignment="Right"
+					Classes="Primary"
 					FontSize="24"
 					Command="{Binding CheckUpdatesCommand}"
 				>
@@ -46,6 +39,47 @@
 					</Panel>
 				</Button>
 			</Panel>
-		</Panel>
+
+			<DataGrid
+				Grid.Row="1"
+				Margin="20"
+				ItemsSource="{Binding Updates}"
+				IsReadOnly="True"
+				GridLinesVisibility="Horizontal"
+				CanUserReorderColumns="False"
+				CanUserResizeColumns="True"
+				CanUserSortColumns="True"
+			>
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Name" Binding="{Binding Update.Name}" Width="*"/>
+					<DataGridTemplateColumn CanUserResize="False" CanUserSort="False" Width="*" Header="Progress">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<ProgressBar Value="{Binding DownloadPercent}" Width="150" HorizontalAlignment="Left" ShowProgressText="True"/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn CanUserResize="False" CanUserSort="False" Header="Actions" Width="200">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<Button
+									Command="{Binding DownloadUpdateCommand}"
+									IsVisible="{Binding !Update.FreshInstall}"
+									HorizontalAlignment="Left"
+									Classes="Primary"
+		>
+									Update
+								</Button>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+				<DataGrid.Styles>
+					<Style Selector="DataGridRow">
+						<Setter Property="Cursor" Value="Hand" />
+					</Style>
+				</DataGrid.Styles>
+			</DataGrid>
+		</StackPanel>
 	</Border>
 </UserControl>

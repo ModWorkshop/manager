@@ -1,6 +1,7 @@
 ﻿using MWSManager.Models;
 using MWSManager.Models.Providers;
 using Serilog;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MWSManager.Services;
 
-public class UpdatesService
+public class UpdatesService : BaseService
 {
     public ObservableCollection<ModUpdate> Updates { get; private set; } = [];
 
@@ -19,21 +20,16 @@ public class UpdatesService
 
     bool CheckingForUpdates = false;
 
-    private UpdatesService() {
+    private GamesService gamesService;
+
+    public UpdatesService() {
         RegisterProvider(new ModWorkshop());
-        RegisterProvider(new ModWorkshopFile());
+        gamesService = Locator.Current.GetService<GamesService>()!;
     }
 
-    private static UpdatesService? instance = null;
-    public static UpdatesService Instance
+    public override void Setup()
     {
-        get
-        {
-            if (instance == null)
-                instance = new UpdatesService();
-
-            return instance;
-        }
+        InitialCheckForUpdates();
     }
 
     public void InitialCheckForUpdates()
@@ -49,13 +45,26 @@ public class UpdatesService
 
     public void AddUpdate(ModUpdate update)
     {
-        Log.Information(update.Id + " , " + update.Provider);
-        Updates.Add(update);
+        Log.Information("Add Update");
+        if (gamesService.Loaded)
+        {
+            Utils.RunInUI(() => Updates.Add(update));
+        } else
+        {
+            Updates.Add(update);
+        }
     }
 
     public void RemoveUpdate(ModUpdate update)
     {
-        Updates.Remove(update);
+        if (gamesService.Loaded)
+        {
+            Utils.RunInUI(() => Updates.Remove(update));
+        }
+        else
+        {
+            Updates.Add(update);
+        }
     }
 
     public void DownloadAndInstall(ModUpdate update)
@@ -101,7 +110,7 @@ public class UpdatesService
             return;
         }
 
-        Log.Information("Checking for updates...");
+        Log.Information($"Checking for updates (#Updates = {Updates.Count})...");
 
         CheckingForUpdates = true;
         Dictionary<string, List<ModUpdate>> providerUpdates = [];

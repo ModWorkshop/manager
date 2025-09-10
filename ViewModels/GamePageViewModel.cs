@@ -39,6 +39,9 @@ public partial class GamePageViewModel : PageViewModel
     [Reactive]
     private ModInfoViewModel modInfo;
 
+    [Reactive]
+    private bool selectAll;
+
     [ObservableAsProperty]
     public bool hasMods = false;
 
@@ -52,6 +55,7 @@ public partial class GamePageViewModel : PageViewModel
         Game = game;
         Thumbnail = game.Thumbnail;
         ModInfo = new ModInfoViewModel();
+        Name = game.Name;
 
         this.WhenAnyValue(x => x.SelectedMod).Subscribe(x => OnSelectedModChanged());
 
@@ -75,14 +79,12 @@ public partial class GamePageViewModel : PageViewModel
 
     public override void OnPageOpened()
     {
-        Log.Information("Ok");
         LoadMods();
-        Log.Information("{0}", Mods.Count);
     }
 
     public void LoadMods()
     {
-        Log.Information("Load Mods");
+        Log.Information($"[{Game.Name}] Load Mods");
         Mods.Clear();
 
         var newMods = new List<ModViewModel>();
@@ -99,5 +101,14 @@ public partial class GamePageViewModel : PageViewModel
     void OnSelectedModChanged()
     {
         ModInfo.Mod = selectedMod?.Mod ?? null;
+    }
+
+    [ReactiveCommand]
+    private void ToggleSelection(bool? selectAll)
+    {
+        foreach (var item in Mods.Items)
+        {
+            //item.IsSelected = selectAll ?? false;
+        }
     }
 }

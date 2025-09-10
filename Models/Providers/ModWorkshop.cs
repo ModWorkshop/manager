@@ -5,6 +5,7 @@ using MWSManager.ViewModels;
 using Newtonsoft.Json;
 using Serilog;
 using SharpCompress;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,83 +39,7 @@ public class ModWorkshop : Provider
     {
         Name = "mws";
         DownloadURL = "https://api.modworkshop.net/mods/$Id$/download";
-    }
-
-    public async override Task CheckMultipleUpdates(List<ModUpdate> updates)
-    {
-        for (int i = 0; i < updates.Count; i+=100)
-        {
-            var client = Utils.GetHTTPClient();
-            var builder = new UriBuilder("https://api.modworkshop.net/mods/versions");
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            builder.Port = -1;
-
-            for (int j = i; j < updates.Count; j++)
-            {
-                query.Add("mod_ids[]", updates[j].Id);
-            }
-
-            builder.Query = query.ToString();
-            var versions = await client.GetStringAsync(builder.ToString());
-            try
-            { 
-                Log.Information(versions);
-                var modVersions = JsonConvert.DeserializeObject<Dictionary<string, string>>(versions);
-                foreach (var update in updates)
-                {
-                    if (modVersions[update.Id] != update.Version)
-                    {
-                        update.RaiseHasUpdate(modVersions[update.Id]);
-                    }
-                }
-            }
-            catch (Exception e) {
-                Log.Error(e.Message);
-            }
-        }
-    }
-
-    
-}
-
-public class ModWorkshopFile : Provider
-{
-    public ModWorkshopFile()
-    {
-        Name = "mws-file";
-        DownloadURL = "https://api.modworkshop.net/files/$Id$/download";
-    }
-
-    public async override Task CheckMultipleUpdates(List<ModUpdate> updates)
-    {
-        for (int i = 0; i < updates.Count; i += 100)
-        {
-            var client = Utils.GetHTTPClient();
-            var builder = new UriBuilder("https://api.modworkshop.net/files/versions");
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            builder.Port = -1;
-
-            for (int j = i; j < updates.Count; j++)
-            {
-                query.Add("file_ids[]", updates[j].Id);
-            }
-
-            builder.Query = query.ToString();
-            try
-            {
-                var versions = await client.GetStringAsync(builder.ToString());
-                Log.Information(versions);
-                var fileVersions = JsonConvert.DeserializeObject<Dictionary<string, string>>(versions);
-                foreach (var update in updates)
-                {
-                    if (fileVersions[update.Id] != update.Version)
-                    {
-                        update.RaiseHasUpdate(fileVersions[update.Id]);
-                    }
-                }
-            }
-            catch (Exception) { }
-        }
+        CheckURL = "https://api.modworkshop.net/mods/$Id$/files/latest/version";
     }
 
     public override async Task DownloadAndInstallNewMod(string id)
@@ -142,14 +67,15 @@ public class ModWorkshopFile : Provider
             return;
         }
 
-        foreach (var game in GamesService.Instance.Games)
+        var gameService = Locator.Current.GetService<GamesService>();
+        foreach (var game in gameService.Games)
         {
             if (game.MWSId == mwsMod.game_id)
             {
                 Log.Information("New mods {0}", mwsMod.name);
                 var update = new ModUpdate(game, $"{mwsMod.name} ({fileData.name})", Name, id, mwsMod.version);
-                UpdatesService.Instance.AddUpdate(update);
-                DownloadAndInstall(update);
+                await DownloadAndInstall(update, "https://api.modworkshop.net/files/$Id$/download");
+                break;
             }
         }
     }

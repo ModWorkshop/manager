@@ -18,8 +18,6 @@ public partial class DownloadsPageViewModel : PageViewModel
 {
     public ObservableCollection<ModUpdateViewModel> Updates { get; } = [];
 
-    public MainWindowViewModel? Window { get; set; }
-
     [Reactive]
     private bool checkingUpdates = false;
 
@@ -28,14 +26,16 @@ public partial class DownloadsPageViewModel : PageViewModel
 
     private bool FirstOpen = false;
 
-    public DownloadsPageViewModel()
+    private readonly UpdatesService _updatesService;
+
+    public DownloadsPageViewModel(UpdatesService updatesService)
     {
         Thumbnail = "avares://MWSManager/Assets/Download.png";
         Name = "Downloads";
 
         hasUpdatesHelper = Updates.ToObservableChangeSet().Select(x => x.Count > 0).ToProperty(this, x => x.HasUpdates);
 
-        UpdatesService updatesService = UpdatesService.Instance;
+        _updatesService = updatesService;
 
         updatesService.Updates.ToObservableChangeSet()
             .AutoRefresh(x => x.FreshInstall)
@@ -83,7 +83,7 @@ public partial class DownloadsPageViewModel : PageViewModel
     private async Task CheckUpdates()
     {
         CheckingUpdates = true; 
-        await UpdatesService.Instance.CheckForUpdates();
+        await _updatesService.CheckForUpdates();
         CheckingUpdates = false;
     }
 }
