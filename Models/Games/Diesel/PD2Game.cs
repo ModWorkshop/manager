@@ -96,12 +96,14 @@ public class PD2Game : DieselGame
             using var stream = new FileStream(mainFile, FileMode.Open);
             using var reader = XmlReader.Create(stream, settings);
 
-            while (reader.Read())
+            try
             {
-                bool found = false;
-                switch (reader.NodeType)
+                while (reader.Read())
                 {
-                    case XmlNodeType.Element:
+                    bool found = false;
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
                         {
                             if (reader.Name == "mod" || reader.Name == "table")
                             {
@@ -114,11 +116,20 @@ public class PD2Game : DieselGame
                             }
                             break;
                         }
+                    }
+                    if (found)
+                    {
+                        break;
+                    }
                 }
-                if (found)
-                {
-                    break;
-                }
+            }
+            catch (XmlException e)
+            {
+                Log.Error(
+                    $"Error reading xml for {
+                        mod.ModPath.Substring(mod.ModPath.LastIndexOf(Path.AltDirectorySeparatorChar) + 1)
+                    }");
+                Log.Error(e.Message);
             }
         }
     }
